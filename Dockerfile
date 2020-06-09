@@ -1,6 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer "jwgibanez@protonmail.ch"
 
+ENV DEBIAN_FRONTEND noninteractive
 ENV NODE "/node"
 ENV ALGORAND_DATA "$NODE/data"
 ENV PATH "$PATH:$NODE"
@@ -17,4 +18,11 @@ RUN wget https://raw.githubusercontent.com/algorand/go-algorand-doc/master/downl
 RUN chmod 544 update.sh
 RUN ./update.sh -i -c stable -p $NODE -d $ALGORAND_DATA -n
 
-ENTRYPOINT ["/bin/bash"]
+RUN mkdir /docker
+COPY ./config /docker
+RUN chmod +x /docker/start.sh
+
+EXPOSE 4001
+EXPOSE 4002
+
+ENTRYPOINT ["/docker/start.sh"]
